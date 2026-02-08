@@ -25,7 +25,14 @@ const envSchema = z.object({
     .min(1)
     .default("postgresql://postgres:postgres@localhost:5432/ms_leads?schema=public"),
 
-  RABBITMQ_URL: z.string().min(1).default("amqp://guest:guest@localhost:5672"),
+  // Optional: if provided, this URL has priority over separate vars.
+  RABBITMQ_URL: z.string().optional().default(""),
+  RABBITMQ_USER: z.string().min(1).default("guest"),
+  RABBITMQ_PASSWORD: z.string().min(1).default("guest"),
+  RABBITMQ_HOST: z.string().min(1).default("localhost"),
+  RABBITMQ_PORT: z.coerce.number().int().positive().default(5672),
+  RABBITMQ_VHOST: z.string().min(1).default("/"),
+  RABBITMQ_PREFETCH: z.coerce.number().int().positive().default(1),
 
   LEADS_MASTER_KEY: base64KeySchema.default(
     Buffer.from("replace-this-master-key").toString("base64"),

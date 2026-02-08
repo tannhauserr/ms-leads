@@ -4,7 +4,13 @@ import { env } from "../../config/env";
 
 
 export class RabbitPubSubService {
-  private readonly rabbitUrl: string;
+  private readonly rabbitUrl?: string;
+  private readonly rabbitUser: string;
+  private readonly rabbitPassword: string;
+  private readonly rabbitHost: string;
+  private readonly rabbitPort: number;
+  private readonly rabbitVhost: string;
+  private readonly rabbitPrefetch: number;
 
   private connection: ChannelModel | null = null;
   private channel: Channel | null = null;
@@ -12,6 +18,12 @@ export class RabbitPubSubService {
 
   constructor(rabbitUrl: string = env.RABBITMQ_URL) {
     this.rabbitUrl = rabbitUrl;
+    this.rabbitUser = env.RABBITMQ_USER;
+    this.rabbitPassword = env.RABBITMQ_PASSWORD;
+    this.rabbitHost = env.RABBITMQ_HOST;
+    this.rabbitPort = env.RABBITMQ_PORT;
+    this.rabbitVhost = env.RABBITMQ_VHOST;
+    this.rabbitPrefetch = env.RABBITMQ_PREFETCH;
   }
 
   public async initialize(): Promise<Channel> {
@@ -24,8 +36,18 @@ export class RabbitPubSubService {
     }
 
     this.initPromise = (async () => {
-      const connection = await connect(this.rabbitUrl);
+      const connection = this.rabbitUrl
+        ? await connect(this.rabbitUrl)
+        : await connect({
+            protocol: "amqp",
+            hostname: this.rabbitHost,
+            port: this.rabbitPort,
+            username: this.rabbitUser,
+            password: this.rabbitPassword,
+            vhost: this.rabbitVhost,
+          });
       const channel = await connection.createChannel();
+      await channel.prefetch(this.rabbitPrefetch);
 
       connection.on("close", () => {
         this.connection = null;

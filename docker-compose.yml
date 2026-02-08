@@ -46,7 +46,13 @@ services:
       PORT: 3000
       LOG_LEVEL: info
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/ms_leads?schema=public
-      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      RABBITMQ_URL:
+      RABBITMQ_USER: guest
+      RABBITMQ_PASSWORD: guest
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_VHOST: /
+      RABBITMQ_PREFETCH: 1
       LEADS_MASTER_KEY: cmVwbGFjZS10aGlzLW1hc3Rlci1rZXk=
       LEADS_KEY_VERSION: 1
       LEADS_HASH_KEY: cmVwbGFjZS10aGlzLWhhc2gta2V5
