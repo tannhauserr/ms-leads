@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id          String  @id @default(uuid()) @db.Uuid
+  source      String  @db.VarChar(100)
+  utmSource   String? @db.VarChar(191)
+  utmMedium   String? @db.VarChar(191)
+  utmCampaign String? @db.VarChar(191)
+
+  firstNameEnc String  @db.Text
+  lastNameEnc  String  @db.Text
+  emailEnc     String  @db.Text
+  phoneEnc     String  @db.Text
+  messageEnc   String? @db.Text
+
+  companyName   String @db.VarChar(255)
+  country       String @db.VarChar(120)
+  businessType  String @db.VarChar(120)
+  numberOfStaff String @db.VarChar(120)
+
+  emailHash String? @db.Char(64)
+  phoneHash String? @db.Char(64)
+
+  createdDate DateTime @default(now())
+
+  @@index([emailHash], map: "idx_leads_email_hash")
+  @@index([phoneHash], map: "idx_leads_phone_hash")
+  @@map("leads")
+}
