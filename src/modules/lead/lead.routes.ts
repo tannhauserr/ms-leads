@@ -1,12 +1,9 @@
 import { Router } from "express";
-import { internalAuthMiddleware } from "../../middlewares/internal-auth.middleware";
-import { leadsRateLimiter } from "../../middlewares/rate-limit.middleware";
-import {
-  createLeadController,
-  getLeadByIdController,
-} from "./lead.controller";
+import { InternalAuthMiddleware } from "../../middlewares/internal-auth.middleware";
+import { LeadRateLimitMiddleware } from "../../middlewares/rate-limit.middleware";
+import { leadController } from "./lead.container";
 
 export const leadRouter = Router();
 
-leadRouter.post("/leads", [leadsRateLimiter], createLeadController);
-leadRouter.get("/leads/:id", [internalAuthMiddleware], getLeadByIdController);
+leadRouter.post("/leads", [LeadRateLimitMiddleware.handle], leadController.createLead);
+leadRouter.get("/leads/:id", [InternalAuthMiddleware.handle], leadController.getLeadById);

@@ -1,42 +1,50 @@
 import { NextFunction, Request, Response } from "express";
 import { createLeadSchema, leadIdParamsSchema } from "./lead.schema";
-import { leadAntiBotService, leadService } from "./lead.container";
+import { LeadService } from "./lead.service";
+import { LeadAntiBotService } from "../../services/security/lead-antibot.service";
 
-export async function createLeadController(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
-  try {
-    const correlationId = req.correlationId ?? "unknown-correlation-id";
-    const payload = createLeadSchema.parse(req.body);
-    await leadAntiBotService.assertIsHumanLeadRequest(payload, {
-      correlationId,
-      remoteIp: req.ip ?? "0.0.0.0",
-    });
-    const result = await leadService.createLead(payload, correlationId);
+export class LeadController {
+  constructor(
+    private readonly leadService: LeadService,
+    private readonly leadAntiBotService: LeadAntiBotService,
+  ) {}
 
-    res.status(201).json(result);
-  } catch (error) {
-    next(error);
-  }
-}
+  public createLead = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const correlationId = req.correlationId ?? "unknown-correlation-id";
+      const payload = createLeadSchema.parse(req.body);
+      await this.leadAntiBotService.assertIsHumanLeadRequest(payload, {
+        correlationId,
+        remoteIp: req.ip ?? "0.0.0.0",
+      });
+      const result = await this.leadService.createLead(payload, correlationId);
 
-export async function getLeadByIdController(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
-  try {
-    const correlationId = req.correlationId ?? "unknown-correlation-id";
-    const params = leadIdParamsSchema.parse(req.params);
-    const result = await leadService.getLeadByIdInternal(
-      params.id,
-      correlationId,
-    );
+      res.status(201).json(result);
+    } catch (error) {
+      next(error);
+    }
+  };
 
-    res.status(200).json(result);
-  } catch (error) {
-    next(error);
-  }
+  public getLeadById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const correlationId = req.correlationId ?? "unknown-correlation-id";
+      const params = leadIdParamsSchema.parse(req.params);
+      const result = await this.leadService.getLeadByIdInternal(
+        params.id,
+        correlationId,
+      );
+
+      res.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
