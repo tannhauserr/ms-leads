@@ -18,7 +18,8 @@ Este servicio recibe datos de contacto desde la web, los guarda en PostgreSQL de
 
 - Cifrado AES-256-GCM por campo.
 - Validación de payload con Zod.
-- Honeypot y rate limit básico.
+- Turnstile (server-side) + honeypot + time-trap (`startedAt`).
+- Rate limit básico.
 - Logs sin PII.
 
 ## Endpoints principales

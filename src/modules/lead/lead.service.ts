@@ -56,7 +56,6 @@ export class LeadService {
     try {
       const lead = await this.prisma.lead.create({
         data: {
-          companyId: input.companyId,
           source: input.source,
           utmSource: input.utmSource,
           utmMedium: input.utmMedium,

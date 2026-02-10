@@ -11,10 +11,15 @@
     "start:dev": "nodemon --config nodemon.json",
     "test": "NODE_ENV=test jest --runInBand",
     "test:watch": "NODE_ENV=test jest --watch",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate:dev": "prisma migrate dev",
-    "prisma:migrate:deploy": "prisma migrate deploy",
-    "prisma:studio": "prisma studio"
+    "prisma:generate": "npx prisma generate",
+    "prisma:migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev",
+    "prisma:migrate:deploy": "dotenv -e .env.production -- npx prisma migrate deploy",
+    "prisma:seed": "dotenv -e .env.development -- ts-node ./prisma/seed/seed.ts",
+    "prisma:seed-wa": "dotenv -e .env.development -- ts-node ./prisma/seed/seed-wa.ts",
+    "prisma:seed-push": "dotenv -e .env.development -- ts-node ./prisma/seed/seed-push.ts",
+    "prisma:seed:prod": "dotenv -e .env.production -- ts-node ./prisma/seed/seed.ts",
+    "prisma:generate:dev": "dotenv -e .env.development -- npx prisma generate",
+    "prisma:generate:prod": "dotenv -e .env.production -- npx prisma generate"
   },
   "dependencies": {
     "@prisma/client": "5.22.0",

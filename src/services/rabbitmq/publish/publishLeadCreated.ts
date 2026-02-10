@@ -11,7 +11,6 @@ export async function publishLeadCreated(
 ): Promise<void> {
   const channel = await rabbitPubSubService.initialize();
   await channel.assertExchange(leadCreatedExchange, "topic", { durable: true });
-
   const payload = Buffer.from(JSON.stringify(event));
   const published = channel.publish(
     leadCreatedExchange,
@@ -29,4 +28,3 @@ export async function publishLeadCreated(
     });
   }
 }
-

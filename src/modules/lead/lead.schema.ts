@@ -2,7 +2,6 @@ import { z } from "zod";
 
 export const createLeadSchema = z
   .object({
-    companyId: z.string().uuid().optional(),
     source: z.string().trim().min(1).max(100).default("webform"),
     utmSource: z.string().trim().max(191).optional(),
     utmMedium: z.string().trim().max(191).optional(),
@@ -12,23 +11,21 @@ export const createLeadSchema = z
     lastName: z.string().trim().min(1).max(120),
     email: z.string().trim().email().max(320),
     phone: z.string().trim().min(5).max(40),
-    message: z.string().trim().max(4_000).optional(),
+    message: z.string().trim().max(140).optional(),
 
     companyName: z.string().trim().min(1).max(255),
     country: z.string().trim().min(1).max(120),
     businessType: z.string().trim().min(1).max(120),
     numberOfStaff: z.string().trim().min(1).max(120),
+    acceptPrivacyPolicy: z.literal(true, {
+      errorMap: () => ({
+        message: "Privacy policy must be accepted",
+      }),
+    }),
 
+    turnstileToken: z.string().trim().min(1).max(2_048),
+    startedAt: z.coerce.number().int().positive(),
     hp: z.string().max(255).optional(),
-  })
-  .superRefine((input, context) => {
-    if (input.hp && input.hp.trim().length > 0) {
-      context.addIssue({
-        code: "custom",
-        path: ["hp"],
-        message: "Honeypot field must be empty",
-      });
-    }
   });
 
 export const leadIdParamsSchema = z.object({

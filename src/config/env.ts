@@ -32,6 +32,7 @@ const envSchema = z.object({
   RABBITMQ_HOST: z.string().min(1).default("localhost"),
   RABBITMQ_PORT: z.coerce.number().int().positive().default(5672),
   RABBITMQ_VHOST: z.string().min(1).default("/"),
+  RABBITMQ_FRAME_MAX: z.coerce.number().int().min(8192).default(131072),
   RABBITMQ_PREFETCH: z.coerce.number().int().positive().default(1),
 
   LEADS_MASTER_KEY: base64KeySchema.default(
@@ -46,6 +47,8 @@ const envSchema = z.object({
 
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(60_000),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(30),
+  TURNSTILE_SECRET_KEY: z.string().default(""),
+  LEAD_MIN_FORM_FILL_MS: z.coerce.number().int().positive().default(3_000),
 });
 
 const parsed = envSchema.safeParse(process.env);
